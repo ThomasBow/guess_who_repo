@@ -10,16 +10,30 @@ public class DatabaseService
         _context = context;
     }
 
+
+
     public User? GetUserById(string id)
     {
         return _context.Users.Find(id);
     }
 
-    public void SaveUser(User user)
+    public User SaveUser(User user, bool? userExists = null)
     {
         user.LastUpdated = DateTime.Now;
-        _context.Users.Update(user);
+
+        userExists ??= GetUserById(user.Id) != null;
+
+        if (userExists.Value)
+        {
+            _context.Users.Update(user);
+        }
+        else
+        {
+            _context.Users.Add(user);
+        }
+
         _context.SaveChanges();
+        return user;
     }
 
     public void DeleteUser(User user)

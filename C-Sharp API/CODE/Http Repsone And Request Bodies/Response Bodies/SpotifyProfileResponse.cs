@@ -1,6 +1,7 @@
 
 
 
+using System.Text;
 using Newtonsoft.Json;
 
 public class SpotifyProfileResponse
@@ -19,4 +20,19 @@ public class SpotifyProfileResponse
 
     [JsonProperty("product")]
     public required string Product { get; set; }
+
+    public override string ToString()
+    {
+        StringBuilder sb = new();
+        sb.Append("Display Name: " + DisplayName + "\n");
+        sb.Append("Country: " + Country + "\n");
+        sb.Append("Id: " + Id + "\n");
+        sb.Append("Product: " + Product + "\n");
+        sb.Append("Images: \n");
+        foreach (SpotifyImage image in Images)
+        {
+            sb.Append(image.ToString() + "\n");
+        }
+        return sb.ToString();
+    }
 }

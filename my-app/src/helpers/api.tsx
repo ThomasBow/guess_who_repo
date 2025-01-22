@@ -4,8 +4,8 @@
 import axios from 'axios';
 import { User } from '../types/model';
 
-async function Get<T>(url: string, base: string = "http://localhost:5221/api/"): Promise<T | undefined> {
-    const fullUrl = base + url;
+async function Get<T>(endpoint: string, base: string = "http://localhost:5221/api/"): Promise<T | undefined> {
+    const fullUrl = base + endpoint;
     console.log('GET:', fullUrl);
     try {
         return (await axios.get<T>(fullUrl)).data;
@@ -14,8 +14,8 @@ async function Get<T>(url: string, base: string = "http://localhost:5221/api/"):
     }
 }
 
-async function ExpectGet<T>(url: string, base?: string): Promise<T> {
-    const response = await Get<T>(url, base);
+async function ExpectGet<T>(endpoint: string, base?: string): Promise<T> {
+    const response = await Get<T>(endpoint, base);
     if (response !== undefined) {
         return response;
     }
@@ -42,8 +42,8 @@ export const CheckNameExists = async (name: string): Promise<boolean> => {
     return response;
 };
 
-async function Post<T>(url: string, body: any = "", base: string = "http://localhost:5221/api/"): Promise<T | undefined> {
-    const fullUrl = base + url;
+async function Post<T>(endpoint: string, body: any = "", base: string = "http://localhost:5221/api/"): Promise<T | undefined> {
+    const fullUrl = base + endpoint;
 
     try {
         return (await axios.post<T>(fullUrl, body)).data;
@@ -52,8 +52,8 @@ async function Post<T>(url: string, body: any = "", base: string = "http://local
     }
 }
 
-async function ExpectPost<T>(url: string, body: any = "", base?: string): Promise<T> {
-    const response = await Post<T>(url, body, base);
+async function ExpectPost<T>(endpoint: string, body: any = "", base?: string): Promise<T> {
+    const response = await Post<T>(endpoint, body, base);
     if (response !== undefined) {
         return response;
     }

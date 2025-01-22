@@ -21,20 +21,6 @@ public class SpotifyController : ControllerBase
         return Ok(authUrl);
     }
 
-    [HttpGet("token")]
-    public async Task<IActionResult> GetToken(string authorizationCode)
-    {
-        try
-        {
-            string accessToken = await _spotifyService.GetAccessTokenWithAuthCode(authorizationCode);
-            return Ok(accessToken);
-        }
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
-    }
-
     [HttpGet("playlists")]
     public async Task<IActionResult> GetPlaylists(string accessToken)
     {

@@ -2,9 +2,9 @@
 
 
 import { Button, Container, Typography } from "@mui/material";
-import { redirectToSpotifyOAuth } from "../helpers/routing";
+import { redirectToSpotifyOAuth } from "../../helpers/routing";
 
-const MainPage: React.FC = () => {
+const UnAuthorizedMainPage: React.FC = () => {
     return (
         <Container
             maxWidth="sm"
@@ -28,4 +28,4 @@ const MainPage: React.FC = () => {
     );
 }
 
-export default MainPage;
+export default UnAuthorizedMainPage;

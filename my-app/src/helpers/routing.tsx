@@ -1,7 +1,9 @@
 
 
 
+import { useContext } from 'react';
 import * as api from './api';
+import { UserContext } from '../App';
 
 export const redirectToSpotifyOAuth = () => {
     api.GetSpotifyAuthUrl().then((url) => {
@@ -10,6 +12,9 @@ export const redirectToSpotifyOAuth = () => {
 }
 
 export const isAuthenticated = () => {
-    // Replace this logic with your actual auth check
-    return localStorage.getItem("user") ? true : false;
+    const { user } = useContext(UserContext);
+
+    const authtorized = user !== null;
+    console.log('isAuthenticated:', authtorized);
+    return authtorized;
 };

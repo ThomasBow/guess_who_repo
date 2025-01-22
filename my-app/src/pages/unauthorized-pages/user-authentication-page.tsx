@@ -2,30 +2,44 @@
 
 
 import { useContext, useEffect } from "react";
-import { Navigate, useSearchParams } from 'react-router-dom';
+import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { Box, Typography, CircularProgress } from "@mui/material";
-import * as api from "../helpers/api";
-import { UserContext } from "../App";
+import * as api from "../../helpers/api";
+import { UserContext } from "../../App";
+import React from "react";
 
 
 
 function UserAuthenticationPage() {
 
     const { setUser } = useContext(UserContext);
+    const navigate = useNavigate();
 
     const [searchParams] = useSearchParams();
     const authCode = searchParams.get('code');
 
+    const [callingApi, setCallingApi] = React.useState(false);
+
     if (authCode === null) {
-        return (<Navigate to='/' />);
+        navigate('/');
+        return;
     }
 
     useEffect(() => {
+        if (callingApi === true) return;
+
+        setCallingApi(true);
+        console.log("Calling API");
         api.GetUserOrCreateNew(authCode).then((user) => {
             setUser(user);
-            window.location.href = '/';
+            console.log("User set:\n", user);
+
+            setTimeout(() => {
+                navigate('/authorized/main-page');
+            }, 1000);
         });
-    });
+    }, []);
+
 
 
     return (

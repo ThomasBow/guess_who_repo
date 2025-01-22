@@ -14,32 +14,44 @@ public class UserService
 
     public async Task<User> GetOrCreateNewUserWithAuthCode(string authCode)
     {
-        string accessToken = await _spotifyService.GetAccessTokenWithAuthCode(authCode);
-        SpotifyProfileResponse spotifyProfile = await _spotifyService.GetSpotifyProfileWithAccessToken(accessToken);
+        SpotifyTokenResponse tokenResponse = await _spotifyService.GetAccessTokenWithAuthCode(authCode);
+        Console.WriteLine("Access token Retrieved: " + tokenResponse);
+
+        SpotifyProfileResponse spotifyProfile = await _spotifyService.GetSpotifyProfileWithAccessToken(tokenResponse.AccessToken);
         User? user = GetUserById(spotifyProfile.Id);
 
-        if (user != null) return user;
-
+        if (user != null)
+        {
+            return UpdateUserTokens(user, tokenResponse);
+        }
         else
         {
-            Console.WriteLine("Creating new user with Spotify profile: " + spotifyProfile.Id);
             user = new()
             {
                 Id = spotifyProfile.Id,
                 DisplayName = spotifyProfile.DisplayName,
                 Country = spotifyProfile.Country,
                 Image = spotifyProfile.Images[0],
-                AccessToken = accessToken,
+                AccessToken = tokenResponse.AccessToken,
+                RefreshToken = tokenResponse.RefreshToken,
+                ExpiresIn = tokenResponse.ExpiresIn
             };
 
-            SaveUser(user);
-            return user;
+            return SaveUser(user);
         }
     }
 
-    public void SaveUser(User user)
+    public User UpdateUserTokens(User user, SpotifyTokenResponse tokenResponse)
     {
-        _databaseService.SaveUser(user);
+        user.AccessToken = tokenResponse.AccessToken;
+        user.RefreshToken = tokenResponse.RefreshToken;
+        user.ExpiresIn = tokenResponse.ExpiresIn;
+        return SaveUser(user);
+    }
+
+    public User SaveUser(User user)
+    {
+        return _databaseService.SaveUser(user);
     }
 
     public User? GetUserById(string id)

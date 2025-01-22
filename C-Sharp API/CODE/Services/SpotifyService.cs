@@ -32,40 +32,34 @@ public class SpotifyService
         return fullOAuthUrl;
     }
 
-    public async Task<string> GetAccessTokenWithAuthCode(string authorizationCode)
+    public async Task<SpotifyTokenResponse> GetAccessTokenWithAuthCode(string authorizationCode)
     {
         Console.WriteLine("Getting access token with auth code: " + authorizationCode);
 
-        var tokenRequestData = new Dictionary<string, string>
-        {
-            { "grant_type", "authorization_code" },
-            { "code", authorizationCode },
-            { "redirect_uri", oAuthRedirectUri },
-            { "client_id", _clientId },
-            { "client_secret", _clientSecret }
-        };
-
-        FormUrlEncodedContent tokenRequestContent = new(tokenRequestData);
-
         HttpRequestMessage request = new(HttpMethod.Post, "https://accounts.spotify.com/api/token")
         {
-            Content = tokenRequestContent
+            Content = new FormUrlEncodedContent(
+            [
+                new KeyValuePair<string, string>("grant_type", "authorization_code"),
+                new KeyValuePair<string, string>("code", authorizationCode),
+                new KeyValuePair<string, string>("redirect_uri", oAuthRedirectUri),
+            ])
         };
 
-        // Adding required headers
-        request.Headers.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_clientId}:{_clientSecret}")));
-        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
+        string base64Secret = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{_clientId}:{_clientSecret}"));
+        request.Headers.Add("Authorization", $"Basic {base64Secret}");
 
         Console.WriteLine("Sending token request...");
         HttpResponseMessage tokenResponse = await client.SendAsync(request);
         Console.WriteLine("Token response received");
 
         string tokenResponseContent = await tokenResponse.Content.ReadAsStringAsync();
+        Console.WriteLine("Token response content: " + tokenResponseContent);
 
         if (tokenResponse.IsSuccessStatusCode)
         {
             SpotifyTokenResponse tokenData = JsonConvert.DeserializeObject<SpotifyTokenResponse>(tokenResponseContent) ?? throw new Exception("Error deserializing token response");
-            return tokenData.AccessToken ?? throw new Exception("Access token not found in token response");
+            return tokenData;
         }
         else
         {
@@ -86,6 +80,7 @@ public class SpotifyService
         if (profileResponse.IsSuccessStatusCode)
         {
             SpotifyProfileResponse profileData = JsonConvert.DeserializeObject<SpotifyProfileResponse>(profileResponseContent) ?? throw new Exception("Error deserializing profile response");
+            Console.WriteLine("Profile data received:\n" + profileData);
             return profileData;
         }
         else
