@@ -1,18 +1,20 @@
 
 
 
-import { useContext, useEffect } from "react";
-import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
+import { useEffect } from "react";
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Box, Typography, CircularProgress } from "@mui/material";
 import * as api from "../../helpers/api";
-import { UserContext } from "../../App";
 import React from "react";
+import { useAuth } from "../../components/AuthProvider";
+import { useGlobalContext } from "../../components/GlobalContextProvider";
 
 
 
 function UserAuthenticationPage() {
 
-    const { setUser } = useContext(UserContext);
+    const { setUser } = useGlobalContext();
+    const { grantAuth } = useAuth();
     const navigate = useNavigate();
 
     const [searchParams] = useSearchParams();
@@ -29,13 +31,12 @@ function UserAuthenticationPage() {
         if (callingApi === true) return;
 
         setCallingApi(true);
-        console.log("Calling API");
         api.GetUserOrCreateNew(authCode).then((user) => {
+            grantAuth();
             setUser(user);
-            console.log("User set:\n", user);
 
             setTimeout(() => {
-                navigate('/authorized/main-page');
+                navigate('/games');
             }, 1000);
         });
     }, []);

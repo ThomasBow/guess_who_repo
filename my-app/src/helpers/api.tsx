@@ -4,6 +4,8 @@
 import axios from 'axios';
 import { User } from '../types/model';
 
+//// GETS ////
+
 async function Get<T>(endpoint: string, base: string = "http://localhost:5221/api/"): Promise<T | undefined> {
     const fullUrl = base + endpoint;
     console.log('GET:', fullUrl);
@@ -42,6 +44,8 @@ export const CheckNameExists = async (name: string): Promise<boolean> => {
     return response;
 };
 
+//// POSTS ////
+
 async function Post<T>(endpoint: string, body: any = "", base: string = "http://localhost:5221/api/"): Promise<T | undefined> {
     const fullUrl = base + endpoint;
 
@@ -63,9 +67,29 @@ async function ExpectPost<T>(endpoint: string, body: any = "", base?: string): P
 }
 
 
-
 export const GetUserOrCreateNew = async (authCode: string): Promise<User> => {
     const endpoint = 'user/' + authCode;
     return await ExpectPost<User>(endpoint);
 };
+
+
+
+//// DELETES ////
+
+export const Delete = async (endpoint: string, body: any = "", base: string = "http://localhost:5221/api/"): Promise<boolean> => {
+    const fullUrl = base + endpoint;
+    try {
+        await axios.delete(fullUrl, { data: body });
+        return true;
+    } catch (error) {
+        console.error('Error deleting from ', fullUrl, ":", error);
+        return false;
+    }
+}
+
+
+export const DeleteUserData = async (user: User): Promise<boolean> => {
+    const endpoint = 'user/' + user.id;
+    return await Delete(endpoint);
+}
 

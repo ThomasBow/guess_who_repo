@@ -33,6 +33,7 @@ public class UserService
                 Country = spotifyProfile.Country,
                 Image = spotifyProfile.Images[0],
                 AccessToken = tokenResponse.AccessToken,
+                AccessTokenReceived = DateTime.Now,
                 RefreshToken = tokenResponse.RefreshToken,
                 ExpiresIn = tokenResponse.ExpiresIn
             };
@@ -44,6 +45,7 @@ public class UserService
     public User UpdateUserTokens(User user, SpotifyTokenResponse tokenResponse)
     {
         user.AccessToken = tokenResponse.AccessToken;
+        user.AccessTokenReceived = DateTime.Now;
         user.RefreshToken = tokenResponse.RefreshToken;
         user.ExpiresIn = tokenResponse.ExpiresIn;
         return SaveUser(user);

@@ -69,6 +69,9 @@ namespace CSharp_API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("AccessTokenReceived")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Country")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

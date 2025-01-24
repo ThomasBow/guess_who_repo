@@ -3,8 +3,16 @@
 
 import { Button, Container, Typography } from "@mui/material";
 import { redirectToSpotifyOAuth } from "../../helpers/routing";
+import { useAuth } from "../../components/AuthProvider";
+import { useNavigate } from "react-router-dom";
 
 const UnAuthorizedMainPage: React.FC = () => {
+
+    const { isAuthenticated } = useAuth();
+    const navigate = useNavigate();
+
+    if (isAuthenticated) navigate('/games');
+
     return (
         <Container
             maxWidth="sm"

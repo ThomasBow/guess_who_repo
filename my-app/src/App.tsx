@@ -1,57 +1,44 @@
+
+
+
 import './App.css'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import UserAuthenticationPage from './pages/unauthorized-pages/user-authentication-page'
 import UnauthorizedMainPage from './pages/unauthorized-pages/main-page';
-import { useState } from 'react';
-import React from 'react';
-import { User } from './types/model';
-import { GlobalData } from './types/react-types';
 import PrivateRoute from './components/PrivateRoute';
-import AuthorizedMainPage from './pages/authorized-pages/main-page';
-
-
-export const UserContext = React.createContext<GlobalData>({
-    user: null,
-    setUser: () => { console.log('UserContext setUser not implemented') }
-});
+import { AuthProvider } from './components/AuthProvider';
+import { GlobalContextProvider } from './components/GlobalContextProvider';
+import { GamesPage } from './pages/authorized-pages/games-page';
 
 function App() {
-
-    const [user, setUser] = useState<User | null>(null);
-
     return (
 
         <BrowserRouter>
-            <UserContext.Provider value={{ user, setUser }}>
-                <Routes>
+            <AuthProvider>
+                <GlobalContextProvider>
+                    <Routes>
 
-                    <Route
-                        path="/"
-                        element=
-                        {
-                            <UnauthorizedMainPage />
-                        }
-                    />
-                    <Route
-                        path="/authentication"
-                        element=
-                        {
-                            <UserAuthenticationPage />
-                        }
-                    />
-                    <Route
-                        path="/authorized/*"
-                        element=
-                        {
-                            <PrivateRoute
-                                element={<AuthorizedMainPage />}
+                        <Route
+                            path="/"
+                            element={<UnauthorizedMainPage />}
+                        />
+                        <Route
+                            path="/authentication"
+                            element={<UserAuthenticationPage />}
+                        />
+                        <Route
+                            element={<PrivateRoute />}
+                        >
+                            <Route
+                                path="/games"
+                                element={<GamesPage />}
                             />
-                        }
-                    />
+                        </Route>
 
-                </Routes>
-            </UserContext.Provider>
-        </BrowserRouter>
+                    </Routes>
+                </GlobalContextProvider>
+            </AuthProvider>
+        </BrowserRouter >
 
 
     )
