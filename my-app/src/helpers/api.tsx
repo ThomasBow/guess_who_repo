@@ -2,7 +2,7 @@
 
 
 import axios from 'axios';
-import { User } from '../types/model';
+import { Game, User } from '../types/model';
 
 //// GETS ////
 
@@ -43,6 +43,12 @@ export const CheckNameExists = async (name: string): Promise<boolean> => {
     const response = await ExpectGet<boolean>(`user/check-name?name=${name}`);
     return response;
 };
+
+export const GetGames = async (): Promise<Game[]> => {
+    console.log('Fetching games...');
+    const games = await ExpectGet<Game[]>('game/games');
+    return games;
+}
 
 //// POSTS ////
 

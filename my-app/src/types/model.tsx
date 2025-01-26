@@ -3,14 +3,14 @@
 
 export type User = {
     id: string;
-    display_name: string;
-    access_token: string;
+    displayName: string;
+    accessToken: string;
     country: string;
-    refresh_token: string | null;
+    refreshToken: string | null;
 
-    last_updated: Date;
+    lastUpdated: Date;
     image: Image;
-    spotify_playlists: Playlist[];
+    spotifyPlaylists: Playlist[];
 }
 
 export type Image = {
@@ -23,4 +23,11 @@ export type Playlist = {
     id: string;
     name: string;
     discription: string;
+}
+
+export type Game = {
+    id: string;
+    displayName: string;
+    discription: string;
+    url: string;
 }
