@@ -11,4 +11,6 @@ public class ApplicationDatabaseContext : DbContext
     }
 
     public DbSet<User> Users { get; set; }
+
+
 }

@@ -1,10 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+using GuessWho.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+ConfigurationManager configuration = builder.Configuration;
 
 builder.Services.AddCors(options =>
 {
@@ -22,10 +21,14 @@ builder.Services.AddSingleton<SpotifyService>();
 builder.Services.AddScoped<DatabaseService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddDbContext<ApplicationDatabaseContext>(options =>
-    options.UseSqlServer(connectionString: "Server=localhost\\SQLEXPRESS;Database=GuessWhoDatabase;Trusted_Connection=True;TrustServerCertificate=True;")
+    options.UseSqlite(configuration.GetConnectionString("DefaultConnection"))
 );
 
-ConfigurationManager configuration = builder.Configuration;
+// Add services to the container.
+// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddOpenApi();
+
+builder.Services.AddSignalR();
 
 string clientId = configuration["MySettings:CLIENT_ID"] ?? throw new Exception("CLIENT_ID not found in configuration");
 string clientSecret = configuration["MySettings:CLIENT_SECRET"] ?? throw new Exception("CLIENT_SECRET not found in configuration");
@@ -38,6 +41,8 @@ var app = builder.Build();
 
 app.UseCors("AllowReactApp");
 app.MapControllers();
+
+app.MapHub<GameHub>("/gamehub");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

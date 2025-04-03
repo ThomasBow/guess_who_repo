@@ -1,6 +1,7 @@
 
 
 
+namespace GuessWho.Rooms;
 public class GameRoom
 {
     public required string RoomId { get; set; }
